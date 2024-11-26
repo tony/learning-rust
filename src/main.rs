@@ -1,10 +1,9 @@
 use std::env;
-use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::{Command, Output};
-use std::os::unix::fs::PermissionsExt;
 
+#[must_use]
 fn find_tmux_path(custom_path: Option<&str>) -> Option<String> {
     if let Some(path) = custom_path {
         if Path::new(path).exists() {
@@ -34,8 +33,10 @@ fn run_tmux_command(tmux_path: &str, args: &[&str]) -> io::Result<Output> {
 mod tests {
     use super::*;
     use std::env;
-    use std::fs::File;
+    use std::fs::{self, File};
     use std::io::Write;
+    use std::path::Path;
+    use std::os::unix::fs::PermissionsExt;
 
     fn setup_mock_path(mock_dir: &Path) -> io::Result<()> {
         let mock_tmux = mock_dir.join("tmux");
