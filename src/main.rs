@@ -23,9 +23,7 @@ fn find_tmux_path(custom_path: Option<&str>) -> Option<String> {
 }
 
 fn run_tmux_command(tmux_path: &str, args: &[&str]) -> io::Result<Output> {
-    let output = Command::new(tmux_path)
-        .args(args)
-        .output()?;
+    let output = Command::new(tmux_path).args(args).output()?;
     Ok(output)
 }
 
@@ -35,8 +33,8 @@ mod tests {
     use std::env;
     use std::fs::{self, File};
     use std::io::Write;
-    use std::path::Path;
     use std::os::unix::fs::PermissionsExt;
+    use std::path::Path;
 
     fn setup_mock_path(mock_dir: &Path) -> io::Result<()> {
         let mock_tmux = mock_dir.join("tmux");
@@ -65,7 +63,8 @@ mod tests {
 
         let current_path = env::var("PATH").unwrap();
         let new_path = format!("{}:{}", temp_path.display(), current_path);
-        env::set_var("PATH", new_path);
+        // TODO: Audit that the environment access only happens in single-threaded code.
+        unsafe { env::set_var("PATH", new_path) };
 
         let result = find_tmux_path(None);
         assert!(result.is_some());
@@ -74,7 +73,8 @@ mod tests {
     #[test]
     fn test_find_tmux_not_found() {
         let temp_dir = tempfile::tempdir().unwrap();
-        env::set_var("PATH", temp_dir.path());
+        // TODO: Audit that the environment access only happens in single-threaded code.
+        unsafe { env::set_var("PATH", temp_dir.path()) };
 
         let result = find_tmux_path(None);
         assert!(result.is_none());
@@ -96,7 +96,8 @@ mod tests {
 
 fn main() {
     let tmux_path = find_tmux_path(None).expect("tmux not found in PATH");
-    let output = run_tmux_command(&tmux_path, &["list-sessions"]).expect("Failed to run tmux command");
+    let output =
+        run_tmux_command(&tmux_path, &["list-sessions"]).expect("Failed to run tmux command");
     io::stdout().write_all(&output.stdout).unwrap();
     io::stderr().write_all(&output.stderr).unwrap();
 }
