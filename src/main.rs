@@ -58,7 +58,6 @@ mod tests {
     use std::io::Write;
     #[cfg(unix)]
     use std::os::unix::fs::PermissionsExt;
-    use std::path::Path;
 
     #[cfg(unix)]
     fn setup_mock_path(mock_dir: &Path) -> io::Result<()> {
