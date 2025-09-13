@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "workflow": "RIPER",
+  "agents": {
+    "description": "3-agent consolidated architecture for improved performance",
+    "primary": [
+      "research-innovate",
+      "plan-execute",
+      "review"
+    ]
+  },
+  "commands": {
+    "description": "RIPER mode control and memory bank operations",
+    "namespaces": [
+      "riper",
+      "memory"
+    ]
+  },
+  "memory-bank": {
+    "enabled": true,
+    "auto-backup": true,
+    "branch-aware": true,
+    "root": ".claude/memory-bank",
+    "directories": {
+      "plans": "{branch}/plans",
+      "reviews": "{branch}/reviews",
+      "sessions": "{branch}/sessions",
+      "backups": "backups"
+    }
+  },
+  "project-context": {
+    "tech-stack": [
+      "Rust",
+      "Cargo",
+      "tmux"
+    ],
+    "important-paths": {
+      "main": "src",
+      "tests": "tests",
+      "docs": "docs",
+      "comment": "Update these paths to match your project structure"
+    },
+    "key-patterns": [
+      "tmux integration",
+      "command execution",
+      "path finding",
+      "mock testing"
+    ]
+  },
+  "reference-docs": [
+    ".claude/project-info.md",
+    "CLAUDE.md"
+  ]
+}
