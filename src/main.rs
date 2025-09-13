@@ -41,6 +41,7 @@ mod tests {
     use std::env;
     use std::fs::{self, File};
     use std::io::Write;
+    #[cfg(unix)]
     use std::os::unix::fs::PermissionsExt;
     use std::path::Path;
 
@@ -49,7 +50,13 @@ mod tests {
         let mut file = File::create(&mock_tmux)?;
         writeln!(file, "#!/bin/sh")?;
         writeln!(file, "echo mock tmux")?;
+        #[cfg(unix)]
         fs::set_permissions(&mock_tmux, fs::Permissions::from_mode(0o755))?;
+        #[cfg(windows)]
+        {
+            // On Windows, files are executable by default if they have the right extension
+            // We don't need to set special permissions
+        }
         Ok(())
     }
 
@@ -63,6 +70,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)] // This test relies on creating an executable script
     fn test_find_tmux_in_path() {
         let temp_dir = tempfile::tempdir().unwrap();
         let temp_path = temp_dir.path().to_path_buf();
@@ -71,6 +79,32 @@ mod tests {
 
         let original_path = env::var("PATH").unwrap();
         let new_path = format!("{}:{}", temp_path.display(), original_path);
+        // TODO: Audit that the environment access only happens in single-threaded code.
+        unsafe { env::set_var("PATH", new_path) };
+
+        let result = find_tmux_path(None);
+
+        // Restore original PATH
+        unsafe { env::set_var("PATH", &original_path) };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn test_find_tmux_in_path() {
+        // On Windows, test with a batch file instead
+        let temp_dir = tempfile::tempdir().unwrap();
+        let temp_path = temp_dir.path().to_path_buf();
+
+        // Create a simple batch file
+        let mock_tmux = temp_path.join("tmux.bat");
+        let mut file = File::create(&mock_tmux).unwrap();
+        writeln!(file, "@echo off").unwrap();
+        writeln!(file, "echo mock tmux").unwrap();
+
+        let original_path = env::var("PATH").unwrap();
+        let new_path = format!("{};{}", temp_path.display(), original_path);
         // TODO: Audit that the environment access only happens in single-threaded code.
         unsafe { env::set_var("PATH", new_path) };
 
@@ -128,6 +162,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)] // This test relies on shell script execution which is Unix-specific
     fn test_run_tmux_command() {
         let temp_dir = tempfile::tempdir().unwrap();
         setup_mock_path(temp_dir.path()).unwrap();
@@ -138,5 +173,15 @@ mod tests {
         let output = result.unwrap();
         let stdout = String::from_utf8_lossy(&output.stdout);
         assert_eq!(stdout.trim(), "mock tmux");
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn test_run_tmux_command() {
+        // On Windows, we'll test with a different approach
+        // Just verify the function can be called without panicking
+        let result = run_tmux_command("nonexistent", &["--version"]);
+        // We expect this to fail since the command doesn't exist
+        assert!(result.is_err());
     }
 }
