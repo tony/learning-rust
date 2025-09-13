@@ -1,0 +1,26 @@
+[package]
+name = "courses_000_example"
+version = "0.1.0"
+edition = "2021"
+authors = ["Learning Rust Contributors"]
+description = "Example course showing all patterns and best practices for Rust learning modules"
+repository = "https://github.com/yourusername/learning-rust"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# No runtime dependencies for the example course
+# Each course will add its own as needed
+
+[dev-dependencies]
+proptest = { workspace = true }
+criterion = { workspace = true }
+tempfile = { workspace = true }
+
+[[bench]]
+name = "performance"
+harness = false
+
+[features]
+default = []
+# Courses can define feature flags for optional content
+advanced = []
