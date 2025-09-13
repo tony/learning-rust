@@ -69,22 +69,34 @@ mod tests {
 
         setup_mock_path(&temp_path).unwrap();
 
-        let current_path = env::var("PATH").unwrap();
-        let new_path = format!("{}:{}", temp_path.display(), current_path);
+        let original_path = env::var("PATH").unwrap();
+        let new_path = format!("{}:{}", temp_path.display(), original_path);
         // TODO: Audit that the environment access only happens in single-threaded code.
         unsafe { env::set_var("PATH", new_path) };
 
         let result = find_tmux_path(None);
+
+        // Restore original PATH
+        unsafe { env::set_var("PATH", &original_path) };
+
         assert!(result.is_some());
     }
 
     #[test]
     fn test_find_tmux_not_found() {
         let temp_dir = tempfile::tempdir().unwrap();
+        let original_path = env::var("PATH").ok();
+
         // TODO: Audit that the environment access only happens in single-threaded code.
         unsafe { env::set_var("PATH", temp_dir.path()) };
 
         let result = find_tmux_path(None);
+
+        // Restore original PATH
+        if let Some(path) = original_path {
+            unsafe { env::set_var("PATH", path) };
+        }
+
         assert!(result.is_none());
     }
 
