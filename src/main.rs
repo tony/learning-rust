@@ -60,18 +60,13 @@ mod tests {
     use std::os::unix::fs::PermissionsExt;
     use std::path::Path;
 
+    #[cfg(unix)]
     fn setup_mock_path(mock_dir: &Path) -> io::Result<()> {
         let mock_tmux = mock_dir.join("tmux");
         let mut file = File::create(&mock_tmux)?;
         writeln!(file, "#!/bin/sh")?;
         writeln!(file, "echo mock tmux")?;
-        #[cfg(unix)]
         fs::set_permissions(&mock_tmux, fs::Permissions::from_mode(0o755))?;
-        #[cfg(windows)]
-        {
-            // On Windows, files are executable by default if they have the right extension
-            // We don't need to set special permissions
-        }
         Ok(())
     }
 
