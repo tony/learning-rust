@@ -5,10 +5,10 @@ use std::process::{Command, Output};
 
 #[must_use]
 fn find_tmux_path(custom_path: Option<&str>) -> Option<String> {
-    if let Some(path) = custom_path {
-        if Path::new(path).exists() {
-            return Some(path.to_string());
-        }
+    if let Some(path) = custom_path
+        && Path::new(path).exists()
+    {
+        return Some(path.to_string());
     }
 
     if let Some(paths) = env::var_os("PATH") {
@@ -25,6 +25,14 @@ fn find_tmux_path(custom_path: Option<&str>) -> Option<String> {
 fn run_tmux_command(tmux_path: &str, args: &[&str]) -> io::Result<Output> {
     let output = Command::new(tmux_path).args(args).output()?;
     Ok(output)
+}
+
+fn main() {
+    let tmux_path = find_tmux_path(None).expect("tmux not found in PATH");
+    let output =
+        run_tmux_command(&tmux_path, &["list-sessions"]).expect("Failed to run tmux command");
+    io::stdout().write_all(&output.stdout).unwrap();
+    io::stderr().write_all(&output.stderr).unwrap();
 }
 
 #[cfg(test)]
@@ -92,12 +100,4 @@ mod tests {
         let stdout = String::from_utf8_lossy(&output.stdout);
         assert_eq!(stdout.trim(), "mock tmux");
     }
-}
-
-fn main() {
-    let tmux_path = find_tmux_path(None).expect("tmux not found in PATH");
-    let output =
-        run_tmux_command(&tmux_path, &["list-sessions"]).expect("Failed to run tmux command");
-    io::stdout().write_all(&output.stdout).unwrap();
-    io::stderr().write_all(&output.stderr).unwrap();
 }
