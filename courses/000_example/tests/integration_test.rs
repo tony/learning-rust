@@ -72,13 +72,13 @@ fn test_performance_comparison() {
     }
 
     // Binary search should be faster than linear for large datasets
-    let linear_time = results
+    let _linear_time = results
         .iter()
         .find(|r| r.name == "Linear Search")
         .unwrap()
         .time_ns;
 
-    let binary_time = results
+    let _binary_time = results
         .iter()
         .find(|r| r.name == "Binary Search")
         .unwrap()
@@ -157,7 +157,7 @@ fn test_product_type() {
 fn test_lesson_structure() {
     use courses_000_example::intro::Lesson;
 
-    let lessons = vec![
+    let lessons = [
         Lesson::new(1, "Introduction", 30),
         Lesson::new(2, "Linear Search", 45),
         Lesson::new(3, "Error Handling", 60),

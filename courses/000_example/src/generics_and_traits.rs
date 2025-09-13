@@ -413,7 +413,7 @@ mod tests {
         assert!(p1 < p2);
         assert_eq!(p1.cmp(&p2), Ordering::Less);
 
-        let mut products = vec![p2.clone(), p1.clone()];
+        let mut products = [p2.clone(), p1.clone()];
         products.sort();
         assert_eq!(products[0].price_cents, 100);
     }

@@ -425,13 +425,13 @@ mod tests {
             .build()
             .unwrap();
 
-        assert_eq!(config.case_sensitive, true);
+        assert!(config.case_sensitive);
         assert_eq!(config.max_results, 50);
         assert_eq!(config.timeout_ms, 2000);
 
         // Default values
         let default_config = SearchConfigBuilder::new().build().unwrap();
-        assert_eq!(default_config.case_sensitive, false);
+        assert!(!default_config.case_sensitive);
         assert_eq!(default_config.max_results, 100);
         assert_eq!(default_config.timeout_ms, 1000);
 
