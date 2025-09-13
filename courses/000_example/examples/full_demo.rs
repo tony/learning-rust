@@ -119,11 +119,18 @@ fn demo_performance() {
     // Compare performance
     let results = compare_search_performance(&data, target);
 
-    println!("Performance comparison for array of {} elements:", data.len());
+    println!(
+        "Performance comparison for array of {} elements:",
+        data.len()
+    );
     println!("Target: {} (found: {})\n", target, results[0].found);
 
     for result in &results {
-        println!("{:<25} {:>10} ns", format!("{}:", result.name), result.time_ns);
+        println!(
+            "{:<25} {:>10} ns",
+            format!("{}:", result.name),
+            result.time_ns
+        );
     }
 
     // Binary search specific

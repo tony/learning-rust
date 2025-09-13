@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 This repository contains 14 progressive Rust courses designed to teach Rust through step-by-step lessons, each building on previous concepts. The structure mirrors successful Python learning repositories but leverages Rust's unique features.
 
+All code uses the **Rust 2024 edition** for the latest language features and idioms.
+
 ## Course Development Standards
 
 ### Lesson File Structure

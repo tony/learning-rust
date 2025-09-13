@@ -3,7 +3,7 @@
 use courses_000_example::{
     binary_search, binary_search_optimized, linear_search, linear_search_naive,
 };
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 
 fn bench_search_algorithms(c: &mut Criterion) {
     let sizes = vec![10, 100, 1000, 10000];

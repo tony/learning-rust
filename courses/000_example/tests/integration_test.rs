@@ -3,7 +3,7 @@
 //! These tests verify that all lessons work together correctly
 //! and demonstrate testing patterns for course modules.
 
-use courses_000_example::{binary_search, linear_search, linear_search_naive, SearchError};
+use courses_000_example::{SearchError, binary_search, linear_search, linear_search_naive};
 
 #[test]
 fn test_all_search_implementations_agree() {
