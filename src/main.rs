@@ -84,20 +84,26 @@ mod tests {
 
     #[test]
     fn test_find_tmux_not_found() {
+        // Test with empty PATH - this ensures tmux won't be found
         let temp_dir = tempfile::tempdir().unwrap();
         let original_path = env::var("PATH").ok();
 
         // TODO: Audit that the environment access only happens in single-threaded code.
         unsafe { env::set_var("PATH", temp_dir.path()) };
 
+        // Test with a non-existent custom path and empty PATH
+        let non_existent = "/definitely/not/a/real/path/to/tmux";
+        let result = find_tmux_path(Some(non_existent));
+        assert!(result.is_none());
+
+        // Test with None and empty PATH
         let result = find_tmux_path(None);
+        assert!(result.is_none());
 
         // Restore original PATH
         if let Some(path) = original_path {
             unsafe { env::set_var("PATH", path) };
         }
-
-        assert!(result.is_none());
     }
 
     #[test]
