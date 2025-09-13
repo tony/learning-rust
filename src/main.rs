@@ -13,9 +13,24 @@ fn find_tmux_path(custom_path: Option<&str>) -> Option<String> {
 
     if let Some(paths) = env::var_os("PATH") {
         for path in env::split_paths(&paths) {
-            let tmux_path = path.join("tmux");
-            if tmux_path.exists() {
-                return Some(tmux_path.to_string_lossy().to_string());
+            // On Unix, just check for "tmux"
+            #[cfg(unix)]
+            {
+                let tmux_path = path.join("tmux");
+                if tmux_path.exists() {
+                    return Some(tmux_path.to_string_lossy().to_string());
+                }
+            }
+
+            // On Windows, check for common executable extensions
+            #[cfg(windows)]
+            {
+                for ext in &["", ".exe", ".bat", ".cmd"] {
+                    let tmux_path = path.join(format!("tmux{}", ext));
+                    if tmux_path.exists() {
+                        return Some(tmux_path.to_string_lossy().to_string());
+                    }
+                }
             }
         }
     }
