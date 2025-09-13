@@ -120,7 +120,10 @@ mod tests {
         // The result might be Some if tmux is in PATH, or None if not
         // But we can verify the custom path itself wasn't used
         if let Some(path) = result_from_custom {
-            assert_ne!(path, non_existent, "Should not return the non-existent custom path");
+            assert_ne!(
+                path, non_existent,
+                "Should not return the non-existent custom path"
+            );
         }
     }
 
